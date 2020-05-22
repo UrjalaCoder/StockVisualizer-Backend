@@ -3,6 +3,7 @@ import os
 import requests
 from datetime import datetime
 import math
+from utils import parse_to_datetime, parse_epoch_to_datetime, partition_with_dates
 
 # Determines the url
 def formulate_url(symbol, full=False, time_interval=1):
@@ -24,12 +25,6 @@ def get_raw_data(symbol="MSFT", full=False, time_interval=1):
     if request.status_code != 200:
         return
     return request.json()
-
-def parse_to_datetime(string):
-    return datetime.strptime(string, "%Y-%m-%d %H:%M:%S")
-
-def parse_epoch_to_datetime(unix_stamp):
-    return datetime.fromtimestamp(unix_stamp)
 
 def filter_data(row, datetime_object):
     date = row["date"]
@@ -61,7 +56,7 @@ def formulate_data(raw_data, datetime):
 
 # Main consumer
 def consume(symbol="MSFT", last_datestamp=None):
-    time_interval = 1
+    time_interval = 60
     compact_size = 100
     date = parse_epoch_to_datetime(last_datestamp) if last_datestamp is not None else parse_epoch_to_datetime(1)
     
@@ -78,3 +73,4 @@ def consume(symbol="MSFT", last_datestamp=None):
 
 if __name__ == "__main__":
     data = consume(symbol="MSFT")
+    partitions = partition_with_dates(data)
