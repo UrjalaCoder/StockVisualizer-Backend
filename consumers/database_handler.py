@@ -20,11 +20,14 @@ def save_data(datapoints, symbol="MSFT"):
         db.collection(f"{symbol}-data").document(f"{date_string}").set(partition_df)
 
 def save_lasttime(datapoints, symbol="MSFT"):
-    last_row = datapoints.head(1).iloc[0]
-    last_date = last_row["date"]
-    timestamp = utils.parse_to_datetime(last_date).timestamp() 
+    if len(datapoints.index) < 1:
+        return
+    # Get the timestamps
+    date_rows = datapoints.apply(lambda row: utils.parse_to_datetime(row["date"]).timestamp(), axis=1)
+    # Maximum timestamp
+    max_timestamp = date_rows.max()
     db.collection(f"{symbol}-data").document(f"last_time").set({
-        "time": timestamp
+       "time": max_timestamp
     })
 
 def last_time(symbol="MSFT"):
