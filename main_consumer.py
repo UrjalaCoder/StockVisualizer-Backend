@@ -1,6 +1,6 @@
 import pandas as pd
-import alphavantage as av
-import database_handler as dbh
+from consumers import alphavantage as av
+from database_utils import database_handler as dbh
 
 # Get the symbols
 def load_symbols():
@@ -31,7 +31,10 @@ def consume_one(symbol="MSFT"):
 def consume():
     symbols = load_symbols()
     for s in symbols['symbol']:
-        consume_one(symbol=s)
+        try:
+            consume_one(symbol=s)
+        except ValueError:
+            print(f"----Failed symbol {s}----")
 
 if __name__ == "__main__":
     consume()

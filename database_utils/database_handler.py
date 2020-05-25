@@ -1,8 +1,9 @@
 import firebase_admin
 from firebase_admin import firestore
 from datetime import datetime
-import utils
+import consumers.utils as utils
 
+# Initialization
 firebase_admin.initialize_app()
 db = firestore.client()
 
@@ -23,9 +24,10 @@ def save_lasttime(datapoints, symbol="MSFT"):
     if len(datapoints.index) < 1:
         return
     # Get the timestamps
-    date_rows = datapoints.apply(lambda row: utils.parse_to_datetime(row["date"]).timestamp(), axis=1)
+    date_rows = datapoints.apply(lambda row: utils.parse_to_datetime(row["date"]), axis=1)
+    stamps = date_rows.apply(lambda val: val.timestamp())
     # Maximum timestamp
-    max_timestamp = date_rows.max()
+    max_timestamp = stamps.max()
     db.collection(f"{symbol}-data").document(f"last_time").set({
        "time": max_timestamp
     })

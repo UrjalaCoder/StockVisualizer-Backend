@@ -39,4 +39,4 @@ def parse_to_datetime(string):
     return datetime.datetime.strptime(string, "%Y-%m-%d %H:%M:%S")
 
 def parse_epoch_to_datetime(unix_stamp):
-    return datetime.datetime.fromtimestamp(unix_stamp)
+    return datetime.datetime.utcfromtimestamp(unix_stamp)

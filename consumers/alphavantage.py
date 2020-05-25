@@ -3,7 +3,7 @@ import os
 import requests
 from datetime import datetime
 import math
-from utils import parse_to_datetime, parse_epoch_to_datetime, partition_with_dates
+from consumers.utils import parse_to_datetime, parse_epoch_to_datetime, partition_with_dates
 
 # Determines the url
 def formulate_url(symbol, full=False, time_interval=1):
