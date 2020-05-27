@@ -9,7 +9,7 @@ def partition_with_dates(raw_data):
     for index, row in raw_data.iterrows():
         date = parse_to_datetime(row["date"])
         start_of_date = datetime.datetime(date.year, date.month, date.day)
-        start_timestamp = start_of_date.timestamp()
+        start_timestamp = start_of_date.replace(tzinfo=datetime.timezone.utc).timestamp()
         # Get all the different start dates
         if start_timestamp not in partitions:
             partitions[start_timestamp] = True
@@ -24,12 +24,10 @@ def partition_with_dates(raw_data):
     
     for partition in partitions.keys():
         target_date = parse_epoch_to_datetime(partition)
-        def date_filter(row):
-            return filter(row, target_date)
-        partitioned = raw_data.apply(date_filter, axis=1)
+        partitioned = raw_data.apply(lambda row: filter(row, target_date), axis=1)
         partitioned_data = raw_data[partitioned]
         data_partitions[partition] = partitioned_data
-
+    
     return data_partitions
 
 def format_to_date(d):
